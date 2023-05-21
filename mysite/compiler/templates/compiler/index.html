@@ -28,15 +28,31 @@
       <div class="text">
         <h3>Tekst Programu</h3>
         {% if file_to_show %}
-        <pre>{{ file_to_show }}</pre>
+          <pre class="odd">{{ file_to_show }}</pre>
         {% endif %}
       </div>
       <div class="code">
         <h3>Fragment kodu</h3>
-        {% if asm_to_show %}
-        <pre>{{ asm_to_show }}</pre>
+        {% if sections %}
+          {% for section in sections %}
+            {% if forloop.counter0|divisibleby:2 %}
+              {% if forloop.counter0 != 0 %}
+                <pre class="even" onmouseover="highlight(this)">{{ section }}</pre>
+              {% endif %}
+            {% else %}
+              <pre class="odd" onmouseover="highlight(this)">{{ section }}</pre>
+            {% endif %}
+          {% endfor %}
         {% endif %}
       </div>
+      <script>
+        function highlight(element) {
+          element.classList.add("highlight");
+          element.onmouseout = function() {
+            element.classList.remove("highlight");
+          }
+        }
+      </script>
       <div class="buttons">
         <button id="standard" class="trapezoid-button" onClick="ShowTab('standard')">Standard</button>
         <button id="optimizations" class="trapezoid-button" onClick="ShowTab('optimizations')">Optymalizacje</button>

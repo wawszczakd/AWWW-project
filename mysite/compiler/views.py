@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.utils import timezone
 from django.http import  FileResponse
-from .models import Folder, File, User
+from .models import Folder, File, User, Section
 from .forms import FolderForm, FileForm, DeleteFolderForm, DeleteFileForm
 import subprocess
-import os, io
+import os, io, re
 
 def MainView(request):
 	context = {
@@ -70,6 +70,9 @@ def CompiledFileView(request, file_id):
 	with open(asm_path, 'r') as fasm:
 		compiled = fasm.read()
 	
+	sections = re.split(';--+', compiled)
+	
+	request.session['sections'] = sections
 	request.session['asm_to_show'] = compiled
 	request.session['asm_path'] = asm_path
 	
@@ -80,6 +83,7 @@ def CompiledFileView(request, file_id):
 		'file_to_show' : file.upload.open('r').read(),
 		'asm_to_show'  : compiled,
 		'asm_path'     : asm_path,
+		'sections'     : sections,
 	}
 	
 	return render(request, 'compiler/index.html', context)
@@ -133,6 +137,65 @@ def NewFileView(request):
 	
 	if form.is_valid():
 		form.save()
+		
+		text = form.cleaned_data['upload'].open('r').read().decode('utf-8')
+		
+		asm = re.findall('asm.*ednasm', text, re.DOTALL)
+		dyr = re.findall('#.*\n', text)
+		com = re.findall('\/\/.*\n', text) + re.findall('\/\*.*\*\/', text, re.DOTALL)
+		dec = re.findall('.*=.*\n', text)
+		pro = re.findall('\w*\(\)\s*{.*}', text, re.DOTALL)
+		
+		for x in asm:
+			section = Section()
+			tmp = text.index(x)
+			section.beginning = text[:tmp].count('\n') + 1
+			section.ending = section.beginning + x.count('\n')
+			section.sectionType = 'inl'
+			section.content = x
+			section.file = File.objects.all().latest('id')
+			section.save()
+		
+		for x in dyr:
+			section = Section()
+			tmp = text.index(x)
+			section.beginning = text[:tmp].count('\n') + 1
+			section.ending = section.beginning + x.count('\n')
+			section.sectionType = 'dir'
+			section.content = x
+			section.file = File.objects.all().latest('id')
+			section.save()
+		
+		for x in com:
+			section = Section()
+			tmp = text.index(x)
+			section.beginning = text[:tmp].count('\n') + 1
+			section.ending = section.beginning + x.count('\n')
+			section.sectionType = 'com'
+			section.content = x
+			section.file = File.objects.all().latest('id')
+			section.save()
+		
+		for x in dec:
+			section = Section()
+			tmp = text.index(x)
+			section.beginning = text[:tmp].count('\n') + 1
+			section.ending = section.beginning + x.count('\n')
+			section.sectionType = 'dec'
+			section.content = x
+			section.file = File.objects.all().latest('id')
+			section.save()
+		
+		for x in pro:
+			section = Section()
+			tmp = text.index(x)
+			section.beginning = text[:tmp].count('\n') + 1
+			section.ending = section.beginning + x.count('\n')
+			section.sectionType = 'pro'
+			section.content = x
+			section.file = File.objects.all().latest('id')
+			section.save()
+		
 		return redirect('compiler:main')
 	
 	form = FileForm()

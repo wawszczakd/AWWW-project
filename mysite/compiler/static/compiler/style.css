@@ -86,6 +86,28 @@ body {
     }
 }
 
+pre.even {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: lightgray;
+}
+pre.odd {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: white;
+}
+pre.highlight {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: yellow;
+}
+
 .trapezoid-button {
     background-color: lightgreen;
     cursor: pointer;
