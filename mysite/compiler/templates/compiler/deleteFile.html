@@ -1,0 +1,16 @@
+<h1>Usuwanie pliku</h1>
+
+<form method="POST">
+	{% csrf_token %}
+	<label for="file">Wybierz folder</label>
+	<select id="file" name = "file">
+	{% for file in files %}
+		<option value = "{{ file.id }}">{{ file.name }}</option>
+	{% endfor %}
+	</select>
+	
+	<br>
+	<br>
+
+	<input type="submit" value="Usuń plik">
+</form>

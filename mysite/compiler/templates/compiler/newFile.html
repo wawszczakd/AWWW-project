@@ -1,0 +1,47 @@
+<h1>Tworzenie nowego pliku</h1>
+
+<form method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	
+	<label for="folder">Folder</label>
+	<select id="folder" name = "folder">
+		<option></option>
+	{% for folder in folders %}
+		<option value = "{{ folder.id }}">{{ folder.name }}</option>
+	{% endfor %}
+	</select>
+
+	<br>
+	<br>
+
+	<label for = "name">Nazwa pliku</label>
+	<input type = "text" id = "name" name = "name" required>
+
+	<br>
+	<br>
+	
+	<label for = "upload">Wybierz plik</label>
+	<input type = "file" id = "upload" name = "upload" required>
+
+	<br>
+	<br>
+
+	<label for = "description">Opis (opcjonalnie)</label>
+	<textarea id = "description" name = "description" rows = "6" cols = "30"></textarea>
+	
+	<br>
+	<br>
+	
+	<label for="owner">Właściciel</label>
+	<select id="owner" name = "owner">
+		<option></option>
+	{% for user in users %}
+		<option value = "{{ user.id }}">{{ user.name }}</option>
+	{% endfor %}
+	</select>
+	
+	<br>
+	<br>
+	
+	<input type="submit" value="Stwórz plik">
+</form>

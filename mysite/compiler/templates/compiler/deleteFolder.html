@@ -1,0 +1,16 @@
+<h1>Usuwanie folderu</h1>
+
+<form method="POST">
+	{% csrf_token %}
+	<label for="parent">Wybierz folder</label>
+	<select id="parent" name = "parent">
+	{% for folder in folders %}
+		<option value = "{{ folder.id }}">{{ folder.name }}</option>
+	{% endfor %}
+	</select>
+	
+	<br>
+	<br>
+
+	<input type="submit" value="Usuń folder">
+</form>

@@ -1,0 +1,40 @@
+<h1>Tworzenie nowego folderu</h1>
+
+<form method="POST">
+	{% csrf_token %}
+	<label for="parent">Folder nadrzędny</label>
+	<select id="parent" name = "parent">
+		<option></option>
+	{% for folder in folders %}
+		<option value = "{{ folder.id }}">{{ folder.name }}</option>
+	{% endfor %}
+	</select>
+
+	<br>
+	<br>
+
+	<label for = "name">Nazwa folderu</label>
+	<input type = "text" id = "name" name = "name" required>
+
+	<br>
+	<br>
+
+	<label for = "description">Opis (opcjonalnie)</label>
+	<textarea id = "description" name = "description" rows = "6" cols = "30"></textarea>
+	
+	<br>
+	<br>
+	
+	<label for="owner">Właściciel</label>
+	<select id="owner" name = "owner">
+		<option></option>
+	{% for user in users %}
+		<option value = "{{ user.id }}">{{ user.name }}</option>
+	{% endfor %}
+	</select>
+	
+	<br>
+	<br>
+	
+	<input type="submit" value="Stwórz folder">
+</form>

@@ -1,0 +1,125 @@
+:root {
+    --negative: 0;
+}
+
+ul {
+    padding-left: 1em;
+}
+
+body {
+    width: 90%;
+    margin: 3em auto;
+    font: .9em/1.2 Arial, Helvetica, sans-serif;
+    max-width: 2000px;
+}
+
+.container > div {
+    overflow: auto;
+    background-color: rgb(207,232,220);
+    border: 1px solid rgb(79,185,227);
+    filter: invert(var(--negative));
+}
+
+.container {
+    display: grid;
+    grid-template-columns: minmax(150px, 250px) minmax(400px, auto) minmax(200px, 450px);
+    grid-template-rows: 40px 500px 40px 150px;
+}
+
+.header {
+    grid-area: 1 / 1 / 2 / 4;
+}
+
+.sidebar {
+    padding: 5px;
+    grid-area: 2 / 1 / 5 / 2;
+}
+
+.text {
+    padding: 5px;
+    grid-area: 2 / 2 / 3 / 3;
+}
+
+.code {
+    padding: 5px;
+    grid-area: 2 / 3 / 3 / 4;
+}
+
+.buttons {
+    grid-area: 3 / 2 / 4 / 4;
+}
+
+.data {
+    padding: 5px;
+    grid-area: 4 / 2 / 5 / 4;
+}
+
+@media screen and (max-width: 850px) {
+    .container {
+        display: grid;
+        grid-template-columns: minmax(500px, auto);
+        grid-template-rows: 40px 300px 500px 300px 40px 150px;
+    }
+    
+    .header {
+        grid-area: 1 / 1 / 2 / 2;
+    }
+    
+    .sidebar {
+        grid-area: 2 / 1 / 3 / 2;
+    }
+    
+    .text {
+        grid-area: 3 / 1 / 4 / 2;
+    }
+    
+    .code {
+        grid-area: 4 / 1 / 5 / 2;
+    }
+    
+    .buttons {
+        grid-area: 5 / 1 / 6 / 2;
+    }
+    
+    .data {
+        grid-area: 6 / 1 / 7 / 2;
+    }
+}
+
+.trapezoid-button {
+    background-color: lightgreen;
+    cursor: pointer;
+    border: none;
+    width: 120px;
+    height: 38px;
+    clip-path: polygon(0% 100%, 100% 100%, 80% 0%, 20% 0%);
+}
+
+.trapezoid-button:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.trapezoid-button.clicked {
+    background-color: #999;
+    color: #fff;
+}
+
+.menu-button {
+    background-color: lightgreen;
+    cursor: pointer;
+    border: none;
+    width: 90px;
+    height: 38px;
+}
+
+.menu-button:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.file:hover {
+    cursor: pointer;
+    color: white;
+    background-color: #4CAF50;
+}

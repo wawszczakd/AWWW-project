@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <title>Projekt AWWW</title>
+    <link rel="stylesheet" href="{% static 'compiler/style.css'%}">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <button onclick="location.href='/main/newFolder/'" class="menu-button">Nowy folder</button>
+        <button onclick="location.href='/main/newFile/'" class="menu-button">Nowy plik</button>
+        <button onclick="location.href='/main/deleteFolder/'" class="menu-button">Usuń folder</button>
+        <button onclick="location.href='/main/deleteFile/'" class="menu-button">Usuń plik</button>
+        {% if file_to_show %}
+        <button onclick="submitForm()" class="menu-button">Kompilacja</button>
+        {% endif %}
+        {% if asm_to_show %}
+        <button onclick="location.href='/main/file/{{ file_id }}/compiled/download/'" class="menu-button">Pobierz</button>
+        {% endif %}
+      </div>
+      <div class="sidebar">
+        <h3>Wybór pliku</h3>
+        {% include 'compiler/printTree.html' %}
+      </div>
+      <div class="text">
+        <h3>Tekst Programu</h3>
+        {% if file_to_show %}
+        <pre>{{ file_to_show }}</pre>
+        {% endif %}
+      </div>
+      <div class="code">
+        <h3>Fragment kodu</h3>
+        {% if asm_to_show %}
+        <pre>{{ asm_to_show }}</pre>
+        {% endif %}
+      </div>
+      <div class="buttons">
+        <button id="standard" class="trapezoid-button" onClick="ShowTab('standard')">Standard</button>
+        <button id="optimizations" class="trapezoid-button" onClick="ShowTab('optimizations')">Optymalizacje</button>
+        <button id="processor" class="trapezoid-button" onClick="ShowTab('processor')">Procesor</button>
+        <button id="dependent" class="trapezoid-button" onClick="ShowTab('dependent')">Zależne</button>
+      </div>
+      <div class="data" id="data-div">
+        <h3>Wybierz opcje, klikając powyższe przyciski.</h3>
+      </div>
+    </div>
+    
+    <div style="display:none;">
+      <form id="hidden-form" method="post" action="/main/file/{{ file_id }}/compiled/">
+        {% csrf_token %}
+        <input type="hidden" name="standard" id="hidden-standard" value="">
+        <input type="hidden" name="optimization" id="hidden-optimization" value="">
+        <input type="hidden" name="processor" id="hidden-processor" value="">
+        <input type="hidden" name="dependent" id="hidden-dependent" value="">
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    
+    <script>
+        var selectedStandard = null;
+        var selectedOptimization = null;
+        var selectedProcessor = null;
+        var selectedDependent = null;
+        
+        function ShowTab(tabName) {
+          
+          var dataDiv = document.getElementById("data-div");
+          var buttons = document.querySelectorAll(".trapezoid-button");
+          buttons.forEach(function(button) {
+            if (button.id === tabName) {
+              button.classList.add("clicked");
+            } else {
+              button.classList.remove("clicked");
+            }
+          });
+          switch (tabName) {
+            case "standard":
+              dataDiv.innerHTML = `
+                <form id="standard">
+                  {% csrf_token %}
+                  <input type="radio" name="standard" value="c89" ${selectedStandard === "c89" ? "checked" : ""}>C89<br>
+                  <input type="radio" name="standard" value="c99" ${selectedStandard === "c99" ? "checked" : ""}>C99<br>
+                  <input type="radio" name="standard" value="c11" ${selectedStandard === "c11" ? "checked" : ""}>C11<br>
+                </form>`;
+              break;
+            case "optimizations":
+              dataDiv.innerHTML = `
+                <form id="optimization">
+                  {% csrf_token %}
+                  <input type="radio" name="optimization" value="gcse" ${selectedOptimization === "gcse" ? "checked" : ""}>gcse<br>
+                  <input type="radio" name="optimization" value="invariant" ${selectedOptimization === "invariant" ? "checked" : ""}>invariant<br>
+                  <input type="radio" name="optimization" value="induction" ${selectedOptimization === "induction" ? "checked" : ""}>induction<br>
+                  <input type="radio" name="optimization" value="loopreverse" ${selectedOptimization === "loopreverse" ? "checked" : ""}>loopreverse<br>
+                </form>`;
+              break;
+            case "processor":
+              dataDiv.innerHTML = `
+                <form id="processor">
+                  {% csrf_token %}
+                  <input type="radio" name="processor" value="mcs51" ${selectedProcessor === "mcs51" ? "checked" : ""}>mcs51<br>
+                  <input type="radio" name="processor" value="z80" ${selectedProcessor === "z80" ? "checked" : ""}>z80<br>
+                  <input type="radio" name="processor" value="stm8" ${selectedProcessor === "stm8" ? "checked" : ""}>stm8<br>
+                </form>`;
+              break;
+            case "dependent":
+              if (selectedProcessor == "mcs51") {
+                dataDiv.innerHTML = `
+                  <form id="dependent">
+                    {% csrf_token %}
+                    <input type="radio" name="dependent" value="small" ${selectedDependent === "small" ? "checked" : ""}>small<br>
+                    <input type="radio" name="dependent" value="medium" ${selectedDependent === "medium" ? "checked" : ""}>medium<br>
+                    <input type="radio" name="dependent" value="large" ${selectedDependent === "large" ? "checked" : ""}>large<br>
+                  </form>`;
+              }
+              else if (selectedProcessor == "z80") {
+                dataDiv.innerHTML = `
+                  <form id="dependent">
+                    {% csrf_token %}
+                    <input type="radio" name="dependent" value="rgbds" ${selectedDependent === "rgbds" ? "checked" : ""}>rgbds<br>
+                    <input type="radio" name="dependent" value="z80asm" ${selectedDependent === "z80asm" ? "checked" : ""}>z80asm<br>
+                    <input type="radio" name="dependent" value="isas" ${selectedDependent === "isas" ? "checked" : ""}>isas<br>
+                  </form>`;
+              }
+              else if (selectedProcessor == "stm8") {
+                dataDiv.innerHTML = `
+                  <form id="dependent">
+                    {% csrf_token %}
+                    <input type="radio" name="dependent" value="medium" ${selectedDependent === "medium" ? "checked" : ""}>medium<br>
+                    <input type="radio" name="dependent" value="large" ${selectedDependent === "large" ? "checked" : ""}>large<br>
+                  </form>`;
+              }
+              else {
+                dataDiv.innerHTML = `<h3>Wybierz procesor</h3>`;
+              }
+              break;
+          }
+        }
+      
+        document.addEventListener("DOMContentLoaded", function(event) {
+          var dataDiv = document.getElementById("data-div");
+          dataDiv.addEventListener("change", function(event) {
+            if (event.target.name === "standard") {
+              selectedStandard = event.target.value;
+            }
+            else if (event.target.name === "optimization") {
+              selectedOptimization = event.target.value;
+            }
+            else if (event.target.name === "processor") {
+              selectedProcessor = event.target.value;
+            }
+            else if (event.target.name === "dependent") {
+              selectedDependent = event.target.value;
+            }
+          });
+        });
+        
+        function submitForm() {
+          var form = document.getElementById("hidden-form");
+          var standardInput = document.getElementById("hidden-standard");
+          var optimizationInput = document.getElementById("hidden-optimization");
+          var processorInput = document.getElementById("hidden-processor");
+          var dependentInput = document.getElementById("hidden-dependent");
+          
+          // set the values of the hidden inputs
+          standardInput.value = selectedStandard;
+          optimizationInput.value = selectedOptimization;
+          processorInput.value = selectedProcessor;
+          dependentInput.value = selectedDependent;
+          
+          // submit the form
+          form.submit();
+        }
+      </script>           
+  </body>
+</html>
