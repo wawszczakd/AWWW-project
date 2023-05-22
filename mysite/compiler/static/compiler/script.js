@@ -102,3 +102,10 @@ function submitForm() {
 	
 	form.submit();
 }
+
+function highlight(element) {
+	element.classList.add("highlight");
+	element.onmouseout = function() {
+	  element.classList.remove("highlight");
+	}
+  }

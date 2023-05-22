@@ -55,14 +55,6 @@
           {% endfor %}
         {% endif %}
       </div>
-      <script>
-        function highlight(element) {
-          element.classList.add("highlight");
-          element.onmouseout = function() {
-            element.classList.remove("highlight");
-          }
-        }
-      </script>
       <div class="buttons">
         <button id="standard" class="trapezoid-button" onClick="ShowTab('standard')">Standard</button>
         <button id="optimizations" class="trapezoid-button" onClick="ShowTab('optimizations')">Optymalizacje</button>
