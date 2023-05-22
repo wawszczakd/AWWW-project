@@ -32,16 +32,5 @@
 	<br>
 	<br>
 	
-	<label for="owner">Właściciel</label>
-	<select id="owner" name = "owner">
-		<option></option>
-	{% for user in users %}
-		<option value = "{{ user.id }}">{{ user.name }}</option>
-	{% endfor %}
-	</select>
-	
-	<br>
-	<br>
-	
 	<input type="submit" value="Stwórz plik">
 </form>

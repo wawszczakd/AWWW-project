@@ -1,15 +1,52 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.utils import timezone
 from django.http import  FileResponse
-from .models import Folder, File, User, Section
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from .models import *
 from .forms import FolderForm, FileForm, DeleteFolderForm, DeleteFileForm
 import subprocess
 import os, io, re
 
+def start(request):
+	return render(request, 'compiler/start.html')
+
+def register(request):
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return redirect('compiler:login')
+	else:
+		form = UserCreationForm()
+	return render(request, 'compiler/register.html', {'form': form})
+
+def user_login(request):
+	if request.method == 'POST':
+		username = request.POST['username']
+		password = request.POST['password']
+		user = authenticate(request, username=username, password=password)
+		if user is not None:
+			login(request, user)
+			return redirect('compiler:main')
+		else:
+			error_message = "Invalid username or password."
+	else:
+		error_message = None
+	return render(request, 'compiler/login.html', {'error_message': error_message})
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect('compiler:start')
+
+@login_required
 def MainView(request):
 	context = {
-		'folders'      : Folder.objects.filter(parent__isnull = True, isAvailable = True),
-		'files'        : File.objects.filter(folder__isnull = True, isAvailable = True),
+		'folders'      : Folder.objects.filter(parent__isnull = True, isAvailable = True, owner=request.user),
+		'files'        : File.objects.filter(folder__isnull = True, isAvailable = True, owner=request.user),
 		'file_id'      : None,
 		'file_to_show' : None,
 		'asm_to_show'  : None,
@@ -17,12 +54,13 @@ def MainView(request):
 	}
 	return render(request, 'compiler/index.html', context)
 
+@login_required
 def ShowingFileView(request, file_id):
 	file = get_object_or_404(File, id = file_id)
 	
 	context = {
-		'folders'      : Folder.objects.filter(parent__isnull = True, isAvailable = True),
-		'files'        : File.objects.filter(folder__isnull = True, isAvailable = True),
+		'folders'      : Folder.objects.filter(parent__isnull = True, isAvailable = True, owner=request.user),
+		'files'        : File.objects.filter(folder__isnull = True, isAvailable = True, owner=request.user),
 		'file_id'      : file_id,
 		'file_to_show' : file.upload.open('r').read(),
 		'asm_to_show'  : None,
@@ -31,6 +69,7 @@ def ShowingFileView(request, file_id):
 	
 	return render(request, 'compiler/index.html', context)
 
+@login_required
 def CompiledFileView(request, file_id):
 	file = get_object_or_404(File, id = file_id)
 	
@@ -77,8 +116,8 @@ def CompiledFileView(request, file_id):
 	request.session['asm_path'] = asm_path
 	
 	context = {
-		'folders'      : Folder.objects.filter(parent__isnull = True, isAvailable = True),
-		'files'        : File.objects.filter(folder__isnull = True, isAvailable = True),
+		'folders'      : Folder.objects.filter(parent__isnull = True, isAvailable = True, owner=request.user),
+		'files'        : File.objects.filter(folder__isnull = True, isAvailable = True, owner=request.user),
 		'file_id'      : file_id,
 		'file_to_show' : file.upload.open('r').read(),
 		'asm_to_show'  : compiled,
@@ -88,6 +127,7 @@ def CompiledFileView(request, file_id):
 	
 	return render(request, 'compiler/index.html', context)
 
+@login_required
 def DownloadCompiledView(request, file_id):
 	file = get_object_or_404(File, id = file_id)
 	asm_path = request.session['asm_path']
@@ -100,11 +140,11 @@ def DownloadCompiledView(request, file_id):
 	
 	return response
 
+@login_required
 def NewFolderView(request):
 	context = {
 		'current_date' : timezone.now().strftime("%Y-%m-%d %H:%M"),
-		'folders'      : Folder.objects.filter(isAvailable = True),
-		'users'        : User.objects.all()
+		'folders'      : Folder.objects.filter(isAvailable = True, owner=request.user),
 	}
 	
 	if request.method != "POST":
@@ -115,17 +155,19 @@ def NewFolderView(request):
 	form = FolderForm(request.POST)
 	
 	if form.is_valid():
-		form.save()
+		folder = form.save(commit=False)
+		folder.owner = request.user
+		folder.save()
 		return redirect('compiler:main')
 	
 	form = FolderForm()
 	context['form'] = form
 	return render(request, 'compiler/newFolder.html', context)
 
+@login_required
 def NewFileView(request):
 	context = {
-		'folders'      : Folder.objects.filter(isAvailable = True),
-		'users'        : User.objects.all(),
+		'folders'      : Folder.objects.filter(isAvailable = True, owner=request.user),
 	}
 	
 	if request.method != "POST":
@@ -136,7 +178,9 @@ def NewFileView(request):
 	form = FileForm(request.POST, request.FILES)
 	
 	if form.is_valid():
-		form.save()
+		file = form.save(commit=False)
+		file.owner = request.user
+		file.save()
 		
 		text = form.cleaned_data['upload'].open('r').read().decode('utf-8')
 		
@@ -202,6 +246,7 @@ def NewFileView(request):
 	context['form'] = form
 	return render(request, 'compiler/newFile.html', context)
 
+@login_required
 def DeleteFolderView(request):
 	context = {
 		'folders' : Folder.objects.filter(isAvailable = True),
@@ -229,6 +274,7 @@ def DeleteFolderView(request):
 	context['form'] = form
 	return render(request, 'compiler/deleteFolder.html', context)
 
+@login_required
 def DeleteFileView(request):
 	context = {
 		'files' : File.objects.filter(isAvailable = True),

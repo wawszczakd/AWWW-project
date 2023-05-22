@@ -5,21 +5,42 @@
     <meta charset="utf-8">
     <title>Projekt AWWW</title>
     <link rel="stylesheet" href="{% static 'compiler/style.css'%}">
+    <style>
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center; /* Add this line */
+      }
+
+      .header div:first-child {
+        margin-right: auto; /* Add this line */
+      }
+    </style>
   </head>
 
   <body>
     <div class="container">
       <div class="header">
-        <button onclick="location.href='/main/newFolder/'" class="menu-button">Nowy folder</button>
-        <button onclick="location.href='/main/newFile/'" class="menu-button">Nowy plik</button>
-        <button onclick="location.href='/main/deleteFolder/'" class="menu-button">Usuń folder</button>
-        <button onclick="location.href='/main/deleteFile/'" class="menu-button">Usuń plik</button>
-        {% if file_to_show %}
-        <button onclick="submitForm()" class="menu-button">Kompilacja</button>
-        {% endif %}
-        {% if asm_to_show %}
-        <button onclick="location.href='/main/file/{{ file_id }}/compiled/download/'" class="menu-button">Pobierz</button>
-        {% endif %}
+        <div>
+          <button onclick="location.href='/main/newFolder/'" class="menu-button">Nowy folder</button>
+          <button onclick="location.href='/main/newFile/'" class="menu-button">Nowy plik</button>
+          <button onclick="location.href='/main/deleteFolder/'" class="menu-button">Usuń folder</button>
+          <button onclick="location.href='/main/deleteFile/'" class="menu-button">Usuń plik</button>
+          {% if file_to_show %}
+          <button onclick="submitForm()" class="menu-button">Kompilacja</button>
+          {% endif %}
+          {% if asm_to_show %}
+          <button onclick="location.href='/main/file/{{ file_id }}/compiled/download/'" class="menu-button">Pobierz</button>
+          {% endif %}
+        </div>
+        <div style="text-align: right;">
+          {% if user.is_authenticated %}
+            Witaj {{ user.username }}
+            <button onclick="location.href='/logout'" class="menu-button">Wyloguj</button>
+          {% else %}
+            <button onclick="location.href='/login'" class="menu-button">Zaloguj</button>
+          {% endif %}
+        </div>
       </div>
       <div class="sidebar">
         <h3>Wybór pliku</h3>

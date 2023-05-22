@@ -9,7 +9,6 @@ class FolderForm(forms.ModelForm):
 			"parent",
 			"name",
 			"description",
-			"owner",
 		]
 
 class DeleteFolderForm(forms.ModelForm):
@@ -27,7 +26,6 @@ class FileForm(forms.ModelForm):
 			"folder",
 			"name",
 			"description",
-			"owner",
 		]
 
 class DeleteFileForm(forms.ModelForm):
