@@ -2,6 +2,15 @@
     --negative: 0;
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header div:first-child {
+    margin-right: auto;
+}
+
 ul {
     padding-left: 1em;
 }
