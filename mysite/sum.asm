@@ -2,87 +2,160 @@
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 4.0.0 #11528 (Linux)
 ;--------------------------------------------------------
-	; MODULE sum
-	.optsdcc -mz80
-	;Generated using the isas tokens.
-	LPREFIX '?'  ; Treat labels starting with ? as local.
-	ONCNUM       ; Numbers are hex
-	CAPSOFF      ; Case sensitive
-	ISDMG        ; Gameboy mode
-_CODE	GROUP
-	; We have to define these here as sdcc doesn't make them global by default
-	GLOBAL __mulschar
-	GLOBAL __muluchar
-	GLOBAL __mulint
-	GLOBAL __divschar
-	GLOBAL __divuchar
-	GLOBAL __divsint
-	GLOBAL __divuint
-	GLOBAL __modschar
-	GLOBAL __moduchar
-	GLOBAL __modsint
-	GLOBAL __moduint
-	GLOBAL banked_call
-	GLOBAL banked_ret
-
+	.module sum
+	.optsdcc -mmcs51 --model-small
+	
 ;--------------------------------------------------------
 ; Public variables in this module
 ;--------------------------------------------------------
-	GLOBAL _main
-	GLOBAL _printf
+	.globl _main
+	.globl _printf
 ;--------------------------------------------------------
 ; special function registers
 ;--------------------------------------------------------
+	.area RSEG    (ABS,DATA)
+	.org 0x0000
 ;--------------------------------------------------------
-; ram data
+; special function bits
 ;--------------------------------------------------------
-	_DATA	GROUP
+	.area RSEG    (ABS,DATA)
+	.org 0x0000
 ;--------------------------------------------------------
-; ram data
+; overlayable register banks
 ;--------------------------------------------------------
-	INITIALIZED	GROUP
+	.area REG_BANK_0	(REL,OVR,DATA)
+	.ds 8
+;--------------------------------------------------------
+; internal ram data
+;--------------------------------------------------------
+	.area DSEG    (DATA)
+;--------------------------------------------------------
+; overlayable items in internal ram 
+;--------------------------------------------------------
+;--------------------------------------------------------
+; Stack segment in internal ram 
+;--------------------------------------------------------
+	.area	SSEG
+__start__stack:
+	.ds	1
+
+;--------------------------------------------------------
+; indirectly addressable internal ram data
+;--------------------------------------------------------
+	.area ISEG    (DATA)
+;--------------------------------------------------------
+; absolute internal ram data
+;--------------------------------------------------------
+	.area IABS    (ABS,DATA)
+	.area IABS    (ABS,DATA)
+;--------------------------------------------------------
+; bit data
+;--------------------------------------------------------
+	.area BSEG    (BIT)
+;--------------------------------------------------------
+; paged external ram data
+;--------------------------------------------------------
+	.area PSEG    (PAG,XDATA)
+;--------------------------------------------------------
+; external ram data
+;--------------------------------------------------------
+	.area XSEG    (XDATA)
 ;--------------------------------------------------------
 ; absolute external ram data
 ;--------------------------------------------------------
-	DABS (ABS)	GROUP
+	.area XABS    (ABS,XDATA)
+;--------------------------------------------------------
+; external initialized ram data
+;--------------------------------------------------------
+	.area XISEG   (XDATA)
+	.area HOME    (CODE)
+	.area GSINIT0 (CODE)
+	.area GSINIT1 (CODE)
+	.area GSINIT2 (CODE)
+	.area GSINIT3 (CODE)
+	.area GSINIT4 (CODE)
+	.area GSINIT5 (CODE)
+	.area GSINIT  (CODE)
+	.area GSFINAL (CODE)
+	.area CSEG    (CODE)
+;--------------------------------------------------------
+; interrupt vector 
+;--------------------------------------------------------
+	.area HOME    (CODE)
+__interrupt_vect:
+	ljmp	__sdcc_gsinit_startup
 ;--------------------------------------------------------
 ; global & static initialisations
 ;--------------------------------------------------------
-	HOME	GROUP
-	GSINIT	GROUP
-	GSFINAL	GROUP
-	GSINIT	GROUP
+	.area HOME    (CODE)
+	.area GSINIT  (CODE)
+	.area GSFINAL (CODE)
+	.area GSINIT  (CODE)
+	.globl __sdcc_gsinit_startup
+	.globl __sdcc_program_startup
+	.globl __start__stack
+	.globl __mcs51_genXINIT
+	.globl __mcs51_genXRAMCLEAR
+	.globl __mcs51_genRAMCLEAR
+	.area GSFINAL (CODE)
+	ljmp	__sdcc_program_startup
 ;--------------------------------------------------------
 ; Home
 ;--------------------------------------------------------
-	_CODE	GROUP
-	_CODE	GROUP
+	.area HOME    (CODE)
+	.area HOME    (CODE)
+__sdcc_program_startup:
+	ljmp	_main
+;	return from main will return to caller
 ;--------------------------------------------------------
 ; code
 ;--------------------------------------------------------
-	_CODE	GROUP
-;sum.c:3: int main() {
-;	---------------------------------
-; Function main
-; ---------------------------------
-_main::
-;sum.c:5: printf("%d\n", a + b);
-	ld	hl, 0x003A
-	push	hl
-	ld	hl, ___str_0
-	push	hl
-	call	_printf
-	pop	af
-	pop	af
-;sum.c:6: return 0;
-	ld	hl, 0x0000
-?l00101:
-;sum.c:7: }
+	.area CSEG    (CODE)
+;------------------------------------------------------------
+;Allocation info for local variables in function 'main'
+;------------------------------------------------------------
+;a                         Allocated to registers 
+;b                         Allocated to registers 
+;------------------------------------------------------------
+;	sum.c:3: int main() {
+;	-----------------------------------------
+;	 function main
+;	-----------------------------------------
+_main:
+	ar7 = 0x07
+	ar6 = 0x06
+	ar5 = 0x05
+	ar4 = 0x04
+	ar3 = 0x03
+	ar2 = 0x02
+	ar1 = 0x01
+	ar0 = 0x00
+;	sum.c:5: printf("%d\n", a + b);
+	mov	a,#0x3a
+	push	acc
+	clr	a
+	push	acc
+	mov	a,#___str_0
+	push	acc
+	mov	a,#(___str_0 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	mov	a,sp
+	add	a,#0xfb
+	mov	sp,a
+;	sum.c:6: return 0;
+	mov	dptr,#0x0000
+;	sum.c:7: }
 	ret
+	.area CSEG    (CODE)
+	.area CONST   (CODE)
+	.area CONST   (CODE)
 ___str_0:
-	DB "%d"
-	DB 0x0A
-	DB 0x00
-	_CODE	GROUP
-	INITIALIZER	GROUP
-	CABS (ABS)	GROUP
+	.ascii "%d"
+	.db 0x0a
+	.db 0x00
+	.area CSEG    (CODE)
+	.area XINIT   (CODE)
+	.area CABS    (ABS,CODE)

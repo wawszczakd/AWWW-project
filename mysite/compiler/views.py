@@ -54,6 +54,10 @@ def MainView(request):
 def ShowingFileView(request, file_id):
 	file = get_object_or_404(File, id = file_id)
 	
+	request.session['file_name'] = None
+	request.session['asm_path'] = None
+	request.session['asm_to_show'] = None
+	
 	return render(request, 'compiler/showFile.html', {'file_to_show' : file.upload.open('r').read()})
 
 @login_required
@@ -96,14 +100,17 @@ def CompiledFileView(request, file_id, standard, optimization, processor, depend
 	
 	sections = re.split(';--+', compiled)
 	
+	request.session['file_name'] = file.name
+	request.session['asm_path'] = asm_path
+	request.session['asm_to_show'] = compiled
+	
 	return render(request, 'compiler/showCompiled.html', {'sections' : sections})
 
 @login_required
-def DownloadCompiledView(request, file_id):
-	file = get_object_or_404(File, id = file_id)
+def DownloadCompiledView(request):
 	asm_path = request.session['asm_path']
 	content = request.session['asm_to_show']
-	filename = os.path.splitext(file.name)[0] + '.asm'
+	filename = os.path.splitext(request.session['file_name'])[0] + '.asm'
 	
 	file_obj = io.BytesIO(content.encode('utf-8'))
 	response = FileResponse(file_obj)

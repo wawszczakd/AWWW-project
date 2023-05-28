@@ -5,9 +5,12 @@ var selectedOptimization = null;
 var selectedProcessor = null;
 var selectedDependent = null;
 
+var dataDiv = document.getElementById("data-div");
+var buttons = document.querySelectorAll(".trapezoid-button");
+
+var compiled = false;
+
 function ShowTab(tabName) {
-	var dataDiv = document.getElementById("data-div");
-	var buttons = document.querySelectorAll(".trapezoid-button");
 	buttons.forEach(function(button) {
 		if (button.id === tabName) {
 			button.classList.add("clicked");
@@ -75,18 +78,18 @@ function ShowTab(tabName) {
 document.addEventListener("DOMContentLoaded", function(event) {
 	var dataDiv = document.getElementById("data-div");
 	dataDiv.addEventListener("change", function(event) {
-	if (event.target.name === "standard") {
-		selectedStandard = event.target.value;
-	}
-	else if (event.target.name === "optimization") {
-		selectedOptimization = event.target.value;
-	}
-	else if (event.target.name === "processor") {
-		selectedProcessor = event.target.value;
-	}
-	else if (event.target.name === "dependent") {
-		selectedDependent = event.target.value;
-	}
+		if (event.target.name === "standard") {
+			selectedStandard = event.target.value;
+		}
+		else if (event.target.name === "optimization") {
+			selectedOptimization = event.target.value;
+		}
+		else if (event.target.name === "processor") {
+			selectedProcessor = event.target.value;
+		}
+		else if (event.target.name === "dependent") {
+			selectedDependent = event.target.value;
+		}
 	});
 });
 
@@ -108,6 +111,8 @@ function handleFileClick(fileId) {
 	};
 	xhr.open('GET', '/main/file/' + fileId, true);
 	xhr.send();
+	
+	compiled = false;
 }
 
 function handleCompilation() {
@@ -124,4 +129,36 @@ function handleCompilation() {
 	selectedOptimization = null;
 	selectedProcessor = null;
 	selectedDependent = null;
+	
+	dataDiv.innerHTML = `<h3>Wybierz opcje, klikając powyższe przyciski.</h3>`;
+	
+	buttons.forEach(function(button) {
+		button.classList.remove("clicked");
+	});
+	
+	compiled = true;
+}
+
+function downloadCompiledFile() {
+	if (!compiled) {
+		alert("Nie skompilowano pliku.");
+		return;
+	}
+	
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			var filename = xhr.getResponseHeader('Content-Disposition').match(/filename="(.+)"/)[1];
+			var content = xhr.responseText;
+			var element = document.createElement('a');
+			element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+			element.setAttribute('download', filename);
+			element.style.display = 'none';
+			document.body.appendChild(element);
+			element.click();
+			document.body.removeChild(element);
+		}
+	};
+	xhr.open('GET', '/main/compiled/download/', true);
+	xhr.send();
 }

@@ -3,7 +3,7 @@
 ; Version 4.0.0 #11528 (Linux)
 ;--------------------------------------------------------
 	.module hello_world
-	.optsdcc -mmcs51 --model-large
+	.optsdcc -mmcs51 --model-small
 	
 ;--------------------------------------------------------
 ; Public variables in this module
