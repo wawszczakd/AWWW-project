@@ -2,7 +2,10 @@
 
 {% if err %}
 	<pre class="odd">{{ err }}</pre>
-{% else %}
+	<br>
+{% endif %}
+
+{% if sections %}
 	{% for section in sections %}
 	{% if forloop.counter0|divisibleby:2 %}
 		{% if forloop.counter0 != 0 %}
