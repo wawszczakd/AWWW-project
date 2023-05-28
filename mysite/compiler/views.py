@@ -47,10 +47,6 @@ def MainView(request):
 	context = {
 		'folders'      : Folder.objects.filter(parent__isnull = True, isAvailable = True, owner=request.user),
 		'files'        : File.objects.filter(folder__isnull = True, isAvailable = True, owner=request.user),
-		'file_id'      : None,
-		'file_to_show' : None,
-		'asm_to_show'  : None,
-		'asm_path'     : None,
 	}
 	return render(request, 'compiler/index.html', context)
 
@@ -58,11 +54,7 @@ def MainView(request):
 def ShowingFileView(request, file_id):
 	file = get_object_or_404(File, id = file_id)
 	
-	context = {
-		'file_to_show' : file.upload.open('r').read(),
-	}
-	
-	return render(request, 'compiler/showFile.html', context)
+	return render(request, 'compiler/showFile.html', {'file_to_show' : file.upload.open('r').read()})
 
 @login_required
 def CompiledFileView(request, file_id, standard, optimization, processor, dependent):
@@ -104,14 +96,7 @@ def CompiledFileView(request, file_id, standard, optimization, processor, depend
 	
 	sections = re.split(';--+', compiled)
 	
-	request.session['sections'] = sections
-	request.session['asm_to_show'] = compiled
-	request.session['asm_path'] = asm_path
-	
-	context = {
-		'sections' : sections,
-	}
-	return render(request, 'compiler/showCompiled.html', context)
+	return render(request, 'compiler/showCompiled.html', {'sections' : sections})
 
 @login_required
 def DownloadCompiledView(request, file_id):

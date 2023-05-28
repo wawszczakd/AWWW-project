@@ -46,19 +46,6 @@
     <h3>Wybierz opcje, klikając powyższe przyciski.</h3>
   </div>
 </div>
-
-{% comment %} 
-<div style="display:none;">
-  <form id="hidden-form" method="post" onsubmit="handleCompilation()">
-    {% csrf_token %}
-    <input type="hidden" name="standard" id="hidden-standard" value="">
-    <input type="hidden" name="optimization" id="hidden-optimization" value="">
-    <input type="hidden" name="processor" id="hidden-processor" value="">
-    <input type="hidden" name="dependent" id="hidden-dependent" value="">
-    <input type="submit" value="Submit">
-  </form>
-</div> {% endcomment %}
-
 <script src="{% static 'compiler/script.js' %}"></script>
 </body>
 </html>
