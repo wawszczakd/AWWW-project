@@ -1,12 +1,17 @@
+{% load static %}
 {% for file in files %}
-	<ul>
-		<a class = "file" href = "/main/file/{{ file.id }}"><img src="https://www.iconpacks.net/icons/2/free-file-icon-1453-thumb.png" height="15px"> {{ file.name }}</a>
-	</ul>
+  <ul>
+    <a class="file" onclick="handleFileClick('{{ file.id }}');">
+      <img src="{% static 'compiler/images/file.png' %}" height="15px"> {{ file.name }}
+    </a>
+  </ul>
 {% endfor %}
 
 {% for folder in folders %}
-	<ul>
-		<a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/OneDrive_Folder_Icon.svg/2048px-OneDrive_Folder_Icon.svg.png" height="15px"> {{ folder.name }}</a>
-		{% include 'compiler/printTree.html' with files=folder.getFiles folders=folder.getFolders %}
-	</ul>
+  <ul>
+    <a>
+      <img src="{% static 'compiler/images/folder.png' %}" height="15px"> {{ folder.name }}
+    </a>
+    {% include 'compiler/printTree.html' with files=folder.getFiles folders=folder.getFolders %}
+  </ul>
 {% endfor %}

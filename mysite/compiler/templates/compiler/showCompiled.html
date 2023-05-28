@@ -1,0 +1,10 @@
+<h3>Fragment kodu</h3>
+{% for section in sections %}
+{% if forloop.counter0|divisibleby:2 %}
+	{% if forloop.counter0 != 0 %}
+	<pre class="even" onmouseover="highlight(this)">{{ section }}</pre>
+	{% endif %}
+{% else %}
+	<pre class="odd" onmouseover="highlight(this)">{{ section }}</pre>
+{% endif %}
+{% endfor %}

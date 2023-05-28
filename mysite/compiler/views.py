@@ -59,42 +59,35 @@ def ShowingFileView(request, file_id):
 	file = get_object_or_404(File, id = file_id)
 	
 	context = {
-		'folders'      : Folder.objects.filter(parent__isnull = True, isAvailable = True, owner=request.user),
-		'files'        : File.objects.filter(folder__isnull = True, isAvailable = True, owner=request.user),
-		'file_id'      : file_id,
 		'file_to_show' : file.upload.open('r').read(),
-		'asm_to_show'  : None,
-		'asm_path'     : None,
 	}
 	
-	return render(request, 'compiler/index.html', context)
+	return render(request, 'compiler/showFile.html', context)
 
 @login_required
-def CompiledFileView(request, file_id):
+def CompiledFileView(request, file_id, standard, optimization, processor, dependent):
+	if file_id == "null":
+		return render(request, 'compiler/noFileSelected.html')
+	file_id = int(file_id)
+	
 	file = get_object_or_404(File, id = file_id)
-	
 	file_name = os.path.basename(file.upload.name)
-	
-	standard = request.POST.get('standard')
-	optimization = request.POST.get('optimization')
-	processor = request.POST.get('processor')
-	dependent = request.POST.get('dependent')
 	
 	command = ['sdcc', '-S']
 	
-	if standard:
+	if standard != "null":
 		standard = f'--std-{standard}'
 		command.append(standard)
 	
-	if optimization:
+	if optimization != "null":
 		optimization = f'--{optimization}'
 		command.append(optimization)
 	
-	if processor:
+	if processor != "null":
 		processor = f'-m{processor}'
 		command.append(processor)
 	
-	if dependent:
+	if dependent != "null":
 		if dependent in ["small", "medium", "large"]:
 			dependent = f'--model-{dependent}'
 		else:
@@ -116,16 +109,9 @@ def CompiledFileView(request, file_id):
 	request.session['asm_path'] = asm_path
 	
 	context = {
-		'folders'      : Folder.objects.filter(parent__isnull = True, isAvailable = True, owner=request.user),
-		'files'        : File.objects.filter(folder__isnull = True, isAvailable = True, owner=request.user),
-		'file_id'      : file_id,
-		'file_to_show' : file.upload.open('r').read(),
-		'asm_to_show'  : compiled,
-		'asm_path'     : asm_path,
-		'sections'     : sections,
+		'sections' : sections,
 	}
-	
-	return render(request, 'compiler/index.html', context)
+	return render(request, 'compiler/showCompiled.html', context)
 
 @login_required
 def DownloadCompiledView(request, file_id):

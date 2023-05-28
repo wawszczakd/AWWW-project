@@ -1,3 +1,5 @@
+var selectedFileId = null;
+
 var selectedStandard = null;
 var selectedOptimization = null;
 var selectedProcessor = null;
@@ -7,11 +9,11 @@ function ShowTab(tabName) {
 	var dataDiv = document.getElementById("data-div");
 	var buttons = document.querySelectorAll(".trapezoid-button");
 	buttons.forEach(function(button) {
-	if (button.id === tabName) {
-		button.classList.add("clicked");
-	} else {
-		button.classList.remove("clicked");
-	}
+		if (button.id === tabName) {
+			button.classList.add("clicked");
+		} else {
+			button.classList.remove("clicked");
+		}
 	});
 	switch (tabName) {
 	case "standard":
@@ -88,24 +90,38 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	});
 });
 
-function submitForm() {
-	var form = document.getElementById("hidden-form");
-	var standardInput = document.getElementById("hidden-standard");
-	var optimizationInput = document.getElementById("hidden-optimization");
-	var processorInput = document.getElementById("hidden-processor");
-	var dependentInput = document.getElementById("hidden-dependent");
-	
-	standardInput.value = selectedStandard;
-	optimizationInput.value = selectedOptimization;
-	processorInput.value = selectedProcessor;
-	dependentInput.value = selectedDependent;
-	
-	form.submit();
-}
-
 function highlight(element) {
 	element.classList.add("highlight");
 	element.onmouseout = function() {
-	  element.classList.remove("highlight");
+		element.classList.remove("highlight");
 	}
-  }
+}
+
+function handleFileClick(fileId) {
+	selectedFileId = fileId;
+	
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			document.getElementById('file-content').innerHTML = xhr.responseText;
+		}
+	};
+	xhr.open('GET', '/main/file/' + fileId, true);
+	xhr.send();
+}
+
+function handleCompilation() {
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+	  if (xhr.readyState === 4 && xhr.status === 200) {
+		document.getElementById('code').innerHTML = xhr.responseText;
+	  }
+	};
+	xhr.open('GET', '/main/file/' + selectedFileId + '/compiled/' + selectedStandard + '/' + selectedOptimization + '/' + selectedProcessor + '/' + selectedDependent + '/', true);
+	xhr.send();
+	
+	selectedStandard = null;
+	selectedOptimization = null;
+	selectedProcessor = null;
+	selectedDependent = null;
+}
