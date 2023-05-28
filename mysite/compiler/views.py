@@ -57,6 +57,7 @@ def ShowingFileView(request, file_id):
 	request.session['file_name'] = None
 	request.session['asm_path'] = None
 	request.session['asm_to_show'] = None
+	request.session['err'] = None
 	
 	return render(request, 'compiler/showFile.html', {'file_to_show' : file.upload.open('r').read()})
 
@@ -92,19 +93,25 @@ def CompiledFileView(request, file_id, standard, optimization, processor, depend
 	
 	command.append(file_name)
 	
-	subprocess.run(command)
+	result = subprocess.run(command, capture_output=True, text=True)
+	err = result.stderr
+	asm_path = None
+	compiled = None
+	sections = None
 	
-	asm_path = os.path.join(os.getcwd(), file_name.rsplit('.', 1)[0] + '.asm')
-	with open(asm_path, 'r') as fasm:
-		compiled = fasm.read()
-	
-	sections = re.split(';--+', compiled)
+	if not err:
+		asm_path = os.path.join(os.getcwd(), file_name.rsplit('.', 1)[0] + '.asm')
+		with open(asm_path, 'r') as fasm:
+			compiled = fasm.read()
+		
+		sections = re.split(';--+', compiled)
 	
 	request.session['file_name'] = file.name
 	request.session['asm_path'] = asm_path
+	request.session['err'] = err
 	request.session['asm_to_show'] = compiled
 	
-	return render(request, 'compiler/showCompiled.html', {'sections' : sections})
+	return render(request, 'compiler/showCompiled.html', {'err' : err, 'sections' : sections})
 
 @login_required
 def DownloadCompiledView(request):
