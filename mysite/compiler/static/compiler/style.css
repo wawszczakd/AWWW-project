@@ -31,7 +31,7 @@ body {
 
 .container {
     display: grid;
-    grid-template-columns: minmax(150px, 250px) minmax(400px, auto) minmax(200px, 450px);
+    grid-template-columns: minmax(150px, 250px) minmax(300px, auto) minmax(200px, 600px);
     grid-template-rows: 40px 500px 40px 150px;
 }
 
