@@ -1,6 +1,6 @@
 from django import forms
 
-from compiler.models import Folder, File, FileToDelete
+from compiler.models import *
 
 class FolderForm(forms.ModelForm):
 	class Meta:
@@ -33,4 +33,15 @@ class DeleteFileForm(forms.ModelForm):
 		model = FileToDelete
 		fields = [
 			"file",
+		]
+
+class SectionForm(forms.ModelForm):
+	class Meta:
+		model = Section
+		fields = [
+			"file",
+			"name",
+			"description",
+			"beginning",
+			"ending",
 		]

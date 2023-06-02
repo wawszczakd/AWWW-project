@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from .models import *
-from .forms import FolderForm, FileForm, DeleteFolderForm, DeleteFileForm
+from .forms import *
 import subprocess
 import os, io, re
 
@@ -280,3 +280,27 @@ def DeleteFileView(request):
 	form = DeleteFileForm()
 	context['form'] = form
 	return render(request, 'compiler/deleteFile.html', context)
+
+@login_required
+def NewSectionView(request):
+	context = {
+		'files' : File.objects.filter(isAvailable = True, owner=request.user),
+	}
+	
+	if request.method != "POST":
+		form = SectionForm()
+		context['form'] = form
+		return render(request, 'compiler/newSection.html', context)
+	
+	form = SectionForm(request.POST, request.FILES)
+	
+	if form.is_valid():
+		section = form.save(commit=False)
+		section.owner = request.user
+		section.save()
+		
+		return redirect('compiler:main')
+	
+	form = SectionForm()
+	context['form'] = form
+	return render(request, 'compiler/newSection.html', context)

@@ -55,5 +55,5 @@ class Section(models.Model):
 	owner = models.ForeignKey(User, on_delete=models.CASCADE, default = None, null=True, blank=True)
 	beginning = models.IntegerField(null=True, blank=True)
 	ending = models.IntegerField(null=True, blank=True)
-	sectionType = models.TextField(choices=SECTION_TYPE)
-	sectionStatus = models.TextField(choices=SECTION_STATUS)
+	sectionType = models.TextField(choices=SECTION_TYPE, null=True, blank=True)
+	sectionStatus = models.TextField(choices=SECTION_STATUS, null=True, blank=True)

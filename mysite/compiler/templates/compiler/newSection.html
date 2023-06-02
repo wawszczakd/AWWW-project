@@ -1,0 +1,42 @@
+<h1>Tworzenie nowej sekcji</h1>
+
+<form method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	
+	<label for="file">Plik</label>
+	<select id="file" name = "file" required>
+		<option></option>
+	{% for file in files %}
+		<option value = "{{ file.id }}">{{ file.name }}</option>
+	{% endfor %}
+	</select>
+
+	<br>
+	<br>
+
+	<label for = "name">Nazwa sekcji</label>
+	<input type = "text" id = "name" name = "name" required>
+
+	<br>
+	<br>
+
+	<label for = "description">Opis (opcjonalnie)</label>
+	<textarea id = "description" name = "description" rows = "6" cols = "30"></textarea>
+	
+	<br>
+	<br>
+
+	<label for = "beginning">Początek sekcji</label>
+	<input type = "number" id = "beginning" name = "beginning" required>
+	
+	<br>
+	<br>
+	
+	<label for = "ending">Koniec sekcji</label>
+	<input type = "number" id = "ending" name = "ending" required>
+	
+	<br>
+	<br>
+	
+	<input type="submit" value="Stwórz sekcję">
+</form>
