@@ -154,3 +154,21 @@ pre.highlight {
     color: white;
     background-color: #4CAF50;
 }
+
+.section-container {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-btn {
+    font-size: 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+.expand-width {
+    display: block;
+    width: 100%;
+}

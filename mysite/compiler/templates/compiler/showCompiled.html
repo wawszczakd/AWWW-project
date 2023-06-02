@@ -1,18 +1,21 @@
 <h3>Fragment kodu</h3>
 
 {% if err %}
-	<pre class="odd">{{ err }}</pre>
-	<br>
+    <pre class="odd">{{ err }}</pre>
+    <br>
 {% endif %}
 
 {% if sections %}
-	{% for section in sections %}
-	{% if forloop.counter0|divisibleby:2 %}
-		{% if forloop.counter0 != 0 %}
-		<pre class="even" onmouseover="highlight(this)">{{ section }}</pre>
-		{% endif %}
-	{% else %}
-		<pre class="odd" onmouseover="highlight(this)">{{ section }}</pre>
-	{% endif %}
-	{% endfor %}
+    {% for section in sections %}
+        {% if forloop.counter == 1 %}
+            <div class="section-container">
+                <pre class="odd" onmouseover="highlight(this)">{{ section }}</pre>
+            </div>
+        {% else %}
+            <div class="section-container">
+                <button onclick="toggleSection({{ forloop.counter }})" class="toggle-btn">&gt;</button>
+                <pre class="{% cycle 'even' 'odd' %} expand-width" id="section{{ forloop.counter }}" onmouseover="highlight(this)">{{ section }}</pre>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endif %}

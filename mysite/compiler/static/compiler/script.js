@@ -162,3 +162,13 @@ function downloadCompiledFile() {
 	xhr.open('GET', '/main/compiled/download/', true);
 	xhr.send();
 }
+
+function toggleSection(sectionId) {
+	var section = document.getElementById("section" + sectionId);  // Get the section by ID
+
+	if (section.style.display === "none" || section.style.display === "") {
+		section.style.display = "block";  // Show the section if it's currently hidden or has no inline style
+	} else {
+		section.style.display = "none";  // Hide the section if it's currently visible
+	}
+}
