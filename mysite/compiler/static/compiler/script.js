@@ -164,11 +164,11 @@ function downloadCompiledFile() {
 }
 
 function toggleSection(sectionId) {
-	var section = document.getElementById("section" + sectionId);  // Get the section by ID
+	var section = document.getElementById("section" + sectionId);
 
 	if (section.style.display === "none" || section.style.display === "") {
-		section.style.display = "block";  // Show the section if it's currently hidden or has no inline style
+		section.style.display = "block";
 	} else {
-		section.style.display = "none";  // Hide the section if it's currently visible
+		section.style.display = "none";
 	}
 }
