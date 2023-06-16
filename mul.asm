@@ -2,7 +2,7 @@
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 4.0.0 #11528 (Linux)
 ;--------------------------------------------------------
-	.module hello_world_FA9fBVI
+	.module mul
 	.optsdcc -mmcs51 --model-small
 	
 ;--------------------------------------------------------
@@ -114,7 +114,10 @@ __sdcc_program_startup:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
-;	hello_world_FA9fBVI.c:3: int main() {
+;a                         Allocated to registers 
+;b                         Allocated to registers 
+;------------------------------------------------------------
+;	mul.c:3: int main() {
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
@@ -127,7 +130,11 @@ _main:
 	ar2 = 0x02
 	ar1 = 0x01
 	ar0 = 0x00
-;	hello_world_FA9fBVI.c:4: printf("Hello World!\n");
+;	mul.c:5: printf("%d\n", a * b);
+	mov	a,#0x09
+	push	acc
+	mov	a,#0x03
+	push	acc
 	mov	a,#___str_0
 	push	acc
 	mov	a,#(___str_0 >> 8)
@@ -135,18 +142,18 @@ _main:
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	hello_world_FA9fBVI.c:5: return 0;
+	mov	a,sp
+	add	a,#0xfb
+	mov	sp,a
+;	mul.c:6: return 0;
 	mov	dptr,#0x0000
-;	hello_world_FA9fBVI.c:6: }
+;	mul.c:7: }
 	ret
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
 	.area CONST   (CODE)
 ___str_0:
-	.ascii "Hello World!"
+	.ascii "%d"
 	.db 0x0a
 	.db 0x00
 	.area CSEG    (CODE)

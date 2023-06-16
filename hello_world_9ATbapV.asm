@@ -2,7 +2,7 @@
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 4.0.0 #11528 (Linux)
 ;--------------------------------------------------------
-	; MODULE mul
+	; MODULE hello_world_9ATbapV
 	.optsdcc -mz80
 	;Generated using the isas tokens.
 	LPREFIX '?'  ; Treat labels starting with ? as local.
@@ -29,7 +29,7 @@ _CODE	GROUP
 ; Public variables in this module
 ;--------------------------------------------------------
 	GLOBAL _main
-	GLOBAL _printf
+	GLOBAL _puts
 ;--------------------------------------------------------
 ; special function registers
 ;--------------------------------------------------------
@@ -61,27 +61,23 @@ _CODE	GROUP
 ; code
 ;--------------------------------------------------------
 	_CODE	GROUP
-;mul.c:3: int main() {
+;hello_world_9ATbapV.c:3: int main() {
 ;	---------------------------------
 ; Function main
 ; ---------------------------------
 _main::
-;mul.c:5: printf("%d\n", a * b);
-	ld	hl, 0x0309
+;hello_world_9ATbapV.c:4: printf("Hello World!\n");
+	ld	hl, ___str_1
 	push	hl
-	ld	hl, ___str_0
-	push	hl
-	call	_printf
+	call	_puts
 	pop	af
-	pop	af
-;mul.c:6: return 0;
+;hello_world_9ATbapV.c:5: return 0;
 	ld	hl, 0x0000
 ?l00101:
-;mul.c:7: }
+;hello_world_9ATbapV.c:6: }
 	ret
-___str_0:
-	DB "%d"
-	DB 0x0A
+___str_1:
+	DB "Hello World!"
 	DB 0x00
 	_CODE	GROUP
 	INITIALIZER	GROUP

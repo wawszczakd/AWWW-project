@@ -2,7 +2,7 @@
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 4.0.0 #11528 (Linux)
 ;--------------------------------------------------------
-	.module ledblink
+	.module ledblink_rDFvsKs
 	.optsdcc -mmcs51 --model-small
 	
 ;--------------------------------------------------------
@@ -355,7 +355,7 @@ __sdcc_program_startup:
 ;------------------------------------------------------------
 ;ms                        Allocated to registers 
 ;------------------------------------------------------------
-;	ledblink.c:11: void delay_ms(unsigned char ms)
+;	ledblink_rDFvsKs.c:11: void delay_ms(unsigned char ms)
 ;	-----------------------------------------
 ;	 function delay_ms
 ;	-----------------------------------------
@@ -368,7 +368,7 @@ _delay_ms:
 	ar2 = 0x02
 	ar1 = 0x01
 	ar0 = 0x00
-;	ledblink.c:26: __endasm;
+;	ledblink_rDFvsKs.c:26: __endasm;
 	mov	r0, dpl
 	00001$:
 	mov r1, #230
@@ -382,29 +382,29 @@ _delay_ms:
 	djnz	r1, 00002$
 	djnz	r0, 00001$
 	ret
-;	ledblink.c:27: }
+;	ledblink_rDFvsKs.c:27: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
-;	ledblink.c:29: void main(void)
+;	ledblink_rDFvsKs.c:29: void main(void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	ledblink.c:31: while(1)
+;	ledblink_rDFvsKs.c:31: while(1)
 00102$:
-;	ledblink.c:33: P1 = 0xFF; // Turn ON all LED's connected to Port1
+;	ledblink_rDFvsKs.c:33: P1 = 0xFF; // Turn ON all LED's connected to Port1
 	mov	_P1,#0xff
-;	ledblink.c:34: delay_ms(10);
+;	ledblink_rDFvsKs.c:34: delay_ms(10);
 	mov	dpl,#0x0a
 	lcall	_delay_ms
-;	ledblink.c:35: P1 = 0x00; // Turn OFF all LED's connected to Port1
+;	ledblink_rDFvsKs.c:35: P1 = 0x00; // Turn OFF all LED's connected to Port1
 	mov	_P1,#0x00
-;	ledblink.c:36: delay_ms(10);
+;	ledblink_rDFvsKs.c:36: delay_ms(10);
 	mov	dpl,#0x0a
 	lcall	_delay_ms
-;	ledblink.c:38: }
+;	ledblink_rDFvsKs.c:38: }
 	sjmp	00102$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)

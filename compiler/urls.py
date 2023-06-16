@@ -15,5 +15,5 @@ urlpatterns = [
 	path('main/newFile/', views.NewFileView, name='newFile'),
 	path('main/deleteFolder/', views.DeleteFolderView, name='deleteFolder'),
 	path('main/deleteFile/', views.DeleteFileView, name='deleteFile'),
-	path('main/newSection/', views.NewSectionView, name='newFile'),
+	path('main/newSection/', views.NewSectionView, name='newSection'),
 ]
