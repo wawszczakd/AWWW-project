@@ -2,9 +2,9 @@
 
 ## Overview
 
-This project is a web application developed as a part of a "Aplikacje WWW" (WWW
-Applications) course project. The goal of the project is to create a user
-interface for the SDCC compiler.
+This project is a web application developed as part of the "Aplikacje WWW" (WWW
+Applications) course. The goal of the project is to create a user interface for
+the SDCC compiler.
 
 ### Features
 
