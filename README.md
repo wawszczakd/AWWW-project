@@ -32,7 +32,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-###Running the Project
+### Running the Project
 
 To run the project, use the following command:
 
